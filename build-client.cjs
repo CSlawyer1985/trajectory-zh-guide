@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // 从 patch.js（IIFE 形态）生成 lib/client.js（静态 client 模块形态）
-// 用法: node build-client.js
+// DOM 机器在模块级运行，不依赖 Cordis fiber 生命周期（运行时释放 fiber 不杀死翻译）
+// 用法: node build-client.cjs
 const fs = require('fs');
 const path = require('path');
 
@@ -12,21 +13,19 @@ const end = src.lastIndexOf('})();');
 if (start === -1 || end === -1) throw new Error('patch.js 结构异常');
 let body = src.slice(start + ';(function () {'.length, end);
 
-// 2) 把观察器/定时器提升为 apply 作用域变量，供卸载清理
+// 2) 定时器提升为模块级变量
 body = body.replace(
   '  var viewRoot = null;',
-  '  var viewRoot = null;\n  var bodyObserver = null;\n  var intervalId = null;'
+  '  var viewRoot = null;\n  var intervalId = null;'
 );
-body = body.replace(
-  'var bodyObserver = new MutationObserver(function () { syncView(); });',
-  'bodyObserver = new MutationObserver(function () { syncView(); });'
-);
-body = body.replace(
-  'window.setInterval(heartbeat, 2000);',
-  'intervalId = window.setInterval(heartbeat, 2000);'
-);
+if (body.indexOf('intervalId = window.setInterval') === -1) {
+  body = body.replace(
+    'window.setInterval(heartbeat, 2000);',
+    'intervalId = window.setInterval(heartbeat, 2000);'
+  );
+}
 
-// 3) 组装为静态 client 模块（ModuleLoader 契约 + Cordis apply）
+// 3) 组装：patch 主体放工厂（模块级），apply 为空壳
 const out = `window.__ModuleLoader__.load({
 \tid: "trajectory-zh-guide",
 \tfactory: (require) => {
@@ -37,17 +36,10 @@ const out = `window.__ModuleLoader__.load({
 \t\t/** Required services: none — DOM-based, works standalone. */
 \t\tconst inject = [];
 \t\tfunction apply(ctx) {
-${body}
-\t\t\tctx.effect(function () {
-\t\t\t\ttry {
-\t\t\t\t\tif (bodyObserver) bodyObserver.disconnect();
-\t\t\t\t\tif (intervalId !== null) window.clearInterval(intervalId);
-\t\t\t\t\tdetach();
-\t\t\t\t\trestore();
-\t\t\t\t} catch (e) { /* noop */ }
-\t\t\t}, 'trajectory-zh-guide: cleanup');
+\t\t\t// 占位：翻译机器在模块级运行，不随 fiber 生命周期启停
 \t\t}
 \t\t//#endregion
+${body}
 \t\texports.apply = apply;
 \t\texports.inject = inject;
 \t\treturn module.exports;
