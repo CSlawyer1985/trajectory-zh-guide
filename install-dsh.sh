@@ -67,7 +67,24 @@ EOF
   echo "✅ 已注册插件行（原文件备份为 cordis.patch.yml.bak）"
 fi
 
-# 3) 记录到 profile package.json 依赖（供未来 pnpm install 恢复；无 node 时跳过）
+# 3) 关闭 dsh 启动时自动打开默认浏览器（桌面应用自带窗口，避免双开网页版）
+if grep -q 'id: web-runtime' "$PATCH"; then
+  echo "✅ 浏览器自动打开已关闭（web-runtime 覆盖已存在）"
+else
+  cat >> "$PATCH" <<'EOF'
+
+# 不自动打开默认浏览器（桌面应用自带窗口，避免双开网页版）
+- id: web-runtime
+  config:
+    openBrowser: false
+    printUrl: true
+    surfaceContext: true
+    trustedHosts: !!js ctx.webStartup.trustedHosts
+EOF
+  echo "✅ 已写入 web-runtime 覆盖（关闭浏览器自动打开）"
+fi
+
+# 4) 记录到 profile package.json 依赖（供未来 pnpm install 恢复；无 node 时跳过）
 NODE_BIN="$(command -v node || echo /opt/homebrew/bin/node)"
 if [ -x "$NODE_BIN" ]; then
   "$NODE_BIN" -e "

@@ -159,6 +159,9 @@ A：完全不会，它只是界面显示。
 **Q：翻译会不会过期？**
 A：v3 起翻译实时跟随——React 更新过的文字（如状态从 Pending 变 Completed）会自动重新翻译。
 
+**Q：启动桌面应用时总会弹出一个浏览器网页？**
+A：这是 dsh 服务的默认行为（与插件无关）。`install-dsh.sh` 已自动在 profile 配置中关闭（`web-runtime → openBrowser: false`），重启应用后不再弹出。桌面应用源码层面也已准备 `--no-open` 修复。
+
 **Q：分享给别人怎么用？**
 A：把整个仓库文件夹发过去（或让对方 clone），运行 `bash install-dsh.sh` 即可，无需登录、无需审批。
 
