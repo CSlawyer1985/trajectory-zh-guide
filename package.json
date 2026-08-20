@@ -1,0 +1,20 @@
+{
+  "name": "trajectory-zh-guide",
+  "version": "2.0.0",
+  "description": "轨迹面板中文翻译+白话讲解：DeepSeek Harness 轨迹面板的文科生友好补丁（静态 client 模块，升级主程序不丢失）",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "inject": [],
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "license": "MIT"
+}
