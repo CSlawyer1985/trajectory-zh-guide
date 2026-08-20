@@ -1,6 +1,6 @@
 {
   "name": "trajectory-zh-guide",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "轨迹面板中文翻译+白话讲解：DeepSeek Harness 轨迹面板的文科生友好补丁（静态 client 模块，升级主程序不丢失）",
   "type": "module",
   "main": "lib/index.js",

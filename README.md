@@ -5,7 +5,7 @@
 **让 DeepSeek Harness 的「轨迹面板」对非程序员同样友好 —— 全中文标签 + 逐条白话讲解 + 顶部导读**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/CSlawyer1985/trajectory-zh-guide)
+[![Version](https://img.shields.io/badge/version-2.0.1-blue.svg)](https://github.com/CSlawyer1985/trajectory-zh-guide)
 [![Author](https://img.shields.io/badge/author-陈石(CS)-orange.svg)](https://github.com/CSlawyer1985)
 [![DeepSeek Harness](https://img.shields.io/badge/DeepSeek%20Harness-已适配-4D6BFE)](https://github.com/deepseek-ai/deepseek-harness)
 
@@ -30,6 +30,12 @@ v2.0 起，本插件以 **DSH 静态 client 模块**形态安装（与 Harness �
 - ✅ **升级主程序不丢失** —— 不再修改 node_modules 里的界面文件，而是作为独立插件包注册进组合（cordis.patch.yml），随 DSH 启动自动加载
 - ✅ 无需审批、无需动态插件机制、重启后依然生效
 - ✅ 旧的快速补丁（apply.sh）仍保留，适合临时体验
+
+### v2.0.1 稳定性修复（重要）
+
+修复了导致插件"静默失效"的根本问题：DSH 运行时会立刻释放插件的生命周期（fiber），
+把 DOM 观察器和心跳一并杀死。v2.0.1 将翻译机器移至**模块级运行**，
+完全独立于插件生命周期——已用自动化测试在真实 GUI 中验证（导读横幅、逐条讲解、中文标签全部生效）。
 
 ### 核心价值
 
