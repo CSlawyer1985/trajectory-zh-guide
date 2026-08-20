@@ -42,6 +42,9 @@ rm -rf "$PKG_DIR2"; mkdir -p "$PKG_DIR2"
 cp -R "$REPO_DIR/lib" "$REPO_DIR/package.json" "$PKG_DIR2/"
 echo "✅ 包体已安装到 profile node_modules: $PKG_DIR2"
 
+# 清理 pnpm 虚拟存储中可能残留的旧快照（防止服务器解析到过期副本）
+rm -rf "$PROFILE/node_modules/.pnpm/$PKG_NAME@"* 2>/dev/null || true
+
 # 2) 在 cordis.patch.yml 注册插件行（幂等）
 PATCH="$PROFILE/cordis.patch.yml"
 if grep -q "id: $PKG_NAME" "$PATCH"; then
